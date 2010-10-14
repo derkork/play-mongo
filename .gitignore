@@ -3,3 +3,7 @@
 /bin
 /dist
 jardesc.jardesc
+/play-mongo-test/test-result
+/play-mongo-test/.classpath
+/play-mongo-test/.project/play-mongo-test/.settings
+/play-mongo-test/logs
