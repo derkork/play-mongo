@@ -1,12 +1,11 @@
 h1. Mongo module
 
+p. The mongo module adds "MongoDB":http://www.mongodb.org support for the Play! framework.
 
-The mongo module adds "MongoDB":http://www.mongodb.org support for the Play! framework.
 
 h2. <a>Enable the Mongo module for the application</a>
 
-
-In the **/conf/application.conf** file, enable the Mongo module by adding this line:
+p. In the **/conf/application.conf** file, enable the Mongo module by adding this line:
 
 bc.. # The mongo module
 module.mongo=${play.path}/modules/mongo
@@ -19,14 +18,11 @@ mongo.database=play
 mongo.username=test
 mongo.password=test123
 
-
 h2. <a>Defining your models</a>
-
 
 p. Creating models to be stored in your Mongo database is very similar to the method of creating
 models in the Play! framework for storage in an SQL database. Provide them with an annotation 
 and have them inherit from a base class, as follows:
-
 
 bc.. @MongoEntity("collectionName")
 public class Car extends MongoModel {
@@ -37,31 +33,24 @@ public class Car extends MongoModel {
 	
 }
 
-
 p. If collectionName is not supplied as a value to the annotation, the collection name will be the 
 same as the class name.
 
-
 h2. <a>Using your models</a>
 
-
-After defining your models, you can use them in the same way as you would a standard SQL based
+p. After defining your models, you can use them in the same way as you would a standard SQL based
 model in Play! framework. The examples below describe how you might use your Mongo based models in a controller.
-
 
 h3. Saving
 
-
-Saving is simple.
+p. Saving is simple.
 
 bc.. Car myCar = new Car("Toyota", "white", 150);
 myCar.save();
 
-
 h3. Finding
 
-
-There are a number of ways to find your models.
+p. There are a number of ways to find your models.
 
 bc.. //get all cars
 List<Car> allCars = Car.find().fetch();
@@ -78,44 +67,37 @@ List<Car> pageOfCars = Car.find().fetch(3,20);
 //get only one car
 Car c = Car.find().first();
 
-
 h3. Query Strings
 
-You can pass query strings when using the find method like so:
-
+p. You can pass query strings when using the find method like so:
 
 bc.. List<Car> toyotas = Car.find("byName", "Toyota").fetch();
 
-
 List<Car> whiteToyotas = Car.find("byNameAndColour", "Toyota", "white").fetch();
-p. Currently the Mongo module only supports the 'And' query operator.
 
+p. Currently the Mongo module only supports the 'And' query operator.
 
 h3. Ordering
 
-
-Ordering your results is very simple, allowing the use of a query very similar to the find.
+p. Ordering your results is very simple, allowing the use of a query very similar to the find.
 
 bc.. List<Car> ascendingNameCars = Car.find().order("byName").fetch();
-
 
 // to perform a descending order, prefix the field with '-'
 List<Car> descendingNameCars = Car.find().order("by-Name").fetch();
 
 h3. Counting your models
 
-
-Counting your models is again, simple.
+p. Counting your models is again, simple.
 
 bc.. long count = Car.count()
 
-
 // alternatively, pass a query string
 long toyotaCount = Car.count("byName", "Toyota");
+
 h3. Deleting
 
-
-Deleting can be done at the model level, or against the entire collection.
+p. Deleting can be done at the model level, or against the entire collection.
 
 bc.. Car c = Car.find().first();
 c.delete();
@@ -126,13 +108,11 @@ Car.delete("byName","Toyota");
 // or just delete everything
 Car.deleteAll();
 
-
 h3. Inner Models
 
+p. Mongo module does not yet support any relationships between models. If you need to model complex relationships then Mongo might not be the correct solution for you.
 
-Mongo module does not yet support any relationships between models. If you need to model complex relationships then Mongo might not be the correct solution for you.
-
-However, Mongo module does support inner models or POJOs within your MongoModel classes. It even supports arrays of both primitive types or POJOs. Unfortunately, only collections of primitive types are currently supported. This is due to runtime erasure of generic types. 
+p. However, Mongo module does support inner models or POJOs within your MongoModel classes. It even supports arrays of both primitive types or POJOs. Unfortunately, only collections of primitive types are currently supported. This is due to runtime erasure of generic types. 
 
 bc.. //As of version 1.1 you no longer require special annotations for inner POJOs.
 public class Driver {
@@ -152,26 +132,19 @@ public class Car extends MongoModel {
 	
 }
 
-
 p. Now when we save our MongoModel to a mongo database, the MongoObject is stored as an inner JSON document. This gives us the ability to access its properties via its parent model in view templates:
-
 
 bc.. <p> Driver Name: ${car.driver.name} </p>
 
-
 p. Or use properties of the inner model as part of our query strings:
-
 
 bc.. Car andrewCar = Car.find(byDriver.name,"Andrew").first();
 
-
 h2. <a>Mongo specific functionality</a>
-
 
 h3. Mongo Information
 
-
-Models are automatically saved with a Mongo ObjectId to the specified collection. Both the ObjectId and collection name can be accessed from the model.
+p. Models are automatically saved with a Mongo ObjectId to the specified collection. Both the ObjectId and collection name can be accessed from the model.
 
 bc.. Car myCar = new Car("Toyota", "white", 150);
 myCar.save();
@@ -179,11 +152,9 @@ myCar.save();
 ObjectId id = myCar.get_id();
 String colName = myCar.getCollectionName();
 
-
 h3. Mongo indexes
 
-
-It is possible to create indexes against your models.
+p. It is possible to create indexes against your models.
 
 bc.. // index the name field of Car
 Car.index("onName");
@@ -203,24 +174,19 @@ Car.dropIndexes();
 // get the names of all the existing indexes
 String [] indexNames = Car.getIndexes();
 
-
 p. Due to the schemaless nature of mongo, it is possible to create an index on a field which does not exist because a document containing that field may be inserted in the future. Ensure you spell your field names correctly.
-
 
 h3. Authentication and Security
 
+p. It is possible to run your mongo database in a secure mode, ensuring that a user must authenticate prior to performing operations on secure data. More information on setting up a secure mongo instance can be found on the Mongo website under "Security and Authentication":http://www.mongodb.org/display/DOCS/Security+and+Authentication.
 
-It is possible to run your mongo database in a secure mode, ensuring that a user must authenticate prior to performing operations on secure data. More information on setting up a secure mongo instance can be found on the Mongo website under "Security and Authentication":http://www.mongodb.org/display/DOCS/Security+and+Authentication.
-
-Assuming you have setup your database correctly, you can leverage the authentication functionality of the mongo module as follows:
+p. Assuming you have setup your database correctly, you can leverage the authentication functionality of the mongo module as follows:
 
 bc.. # ensure you set the necessary configuration parameters to match authentication details on your database
 mongo.username=test
 mongo.password=test123
 
-
 p. Now you can perform the following operations in your controllers.
-
 
 bc.. //add a user - with read only access
 MongoDB.addUser("username","password", true);
@@ -234,5 +200,12 @@ boolean success = MongoDB.authenticate("username","password");
 // remove a user
 MongoDB.removeUser("username");
 
-
 p. Please note that readOnly restrictions will only apply on mongo versions 1.3.2+
+
+h2. <a>Test Application</a>
+
+p. Included in the module distribution is a play-mongo-test directory. This is a play framework application that runs the code shown in the documentation above. The best to run this is to create a new play framework application and to copy the contents of the play-mongo-test directory there. Be sure to update the path to the mongo module as shown above. 
+
+h2. <a>What's Next?</a>
+
+p. The next step for play-mongo will to be update the module to use the new JPA features provided in version 1.1 of the framework.
